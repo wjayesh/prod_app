@@ -64,33 +64,33 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   loadData() async {
-    // FlutterAppAuth _appauth = FlutterAppAuth();
-    // AuthorizationTokenResponse result;
-    // try{
-    // result = await _appauth.authorizeAndExchangeCode(
-    //   AuthorizationTokenRequest(clientId, redirectURL,
-    //       //issuer: "https://prodplatform.b2clogin.com/ccab738-09c1-45df-8aca-7c17c285b689/v2.0/",
-    //       discoveryUrl: discoveryURL,
-    //       scopes: scopes),
-    // );
-    // }
-    // catch(e){
-    //   print(e.toString());
-    // }
-    final Config config = new Config(
-        "cc0ab738-09c1-45df-8aca-7c17c285b689",
-        clientId,
-        "openid offline_access",
-        redirectURL);
-    final AadOAuth oauth = new AadOAuth(config);
-    await oauth.login();
-    String result = await oauth.getAccessToken();
+    FlutterAppAuth _appauth = FlutterAppAuth();
+    AuthorizationTokenResponse result;
+    try{
+    result = await _appauth.authorizeAndExchangeCode(
+      AuthorizationTokenRequest(clientId, redirectURL,
+          //issuer: "https://prodplatform.b2clogin.com/ccab738-09c1-45df-8aca-7c17c285b689/v2.0/",
+          discoveryUrl: discoveryURL,
+          scopes: scopes),
+    );
+    }
+    catch(e){
+      print(e.toString());
+    }
+    // final Config config = new Config(
+    //     "cc0ab738-09c1-45df-8aca-7c17c285b689",
+    //     clientId,
+    //     "openid offline_access",
+    //     redirectURL);
+    // final AadOAuth oauth = new AadOAuth(config);
+    // await oauth.login();
+    // String result = await oauth.getAccessToken();
 
 
     prefs = await SharedPreferences.getInstance();
     while (prefs == null || result == null) continue;
     setState(() {
-      prefs.setString('token', result);
+      prefs.setString('token', result.idToken);
     });
     //print(result);
 
