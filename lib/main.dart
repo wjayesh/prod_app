@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:aad_oauth/aad_oauth.dart';
 import 'package:aad_oauth/model/config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 void main() => runApp(MyApp());
 
@@ -93,8 +96,12 @@ class _MyHomePageState extends State<MyHomePage> {
       prefs.setString('token', result.idToken);
     });
     //print(result);
-
-
+    var idToken = result.idToken;
+    final graphResponse = await http.get(
+      'https://graph.microsoft.com/v1.0/me',
+      headers: { HttpHeaders.authorizationHeader: "Bearer $idToken"}
+    );
+    print(graphResponse);
   
   }
 

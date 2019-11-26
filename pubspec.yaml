@@ -26,6 +26,7 @@ dependencies:
   flutter_appauth: ^0.5.0
   shared_preferences: ^0.5.4+5
   aad_oauth: "^0.1.7"
+  http: ^0.12.0+2
 
 dev_dependencies:
   flutter_test:
