@@ -70,35 +70,37 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   loadData() async {
-//     https://<tenant-name>.b2clogin.com/tfp/<tenant-name>.onmicrosoft.com/<policy-name>/oauth2/v2.0/authorize?
-// client_id=<application-ID>
-// &nonce=anyRandomValue
-// &redirect_uri=https://jwt.ms
-// &scope=https://tenant-name>.onmicrosoft.com/api/read
-// &response_type=code
+//     https://prodplatform.b2clogin.com/prodplatform.onmicrosoft.com/oauth2/v2.0/authorize?
+//p=B2C_1_SignUpSignIn
+//&client_id=b776705b-29e9-4b80-9c5f-4ccee78a7fef
+//&nonce=defaultNonce
+//&redirect_uri=com.imaginecup.prodplatform%3A%2F%2Foauthredirect&scope=openid&response_type=id_token&prompt=login
     var queryParameters = {
-      'client_id': 'one',
-      'nonce': 'two',
-      'redirect_uri': redirectURL,
-      'scope': "https://prodplatform.onmicrosoft.com/api/read openid offline Contacts.ReadWrite",
+      'p': "B2C_1_SignUpSignIn",
+      'client_id': clientId,
+      'nonce': 'defaultNonce',
+      'redirect_uri': 'urn:ietf:wg:oauth:2.0:oob',
+      'scope': "$clientId offline_access openid",
+      'response_type': "code",
+      'prompt': "login",
     };
     var uri = Uri.https(
-        'www.myurl.com', '/api/v1/test/${widget.pk}', queryParameters);
-    var response = await http.get(uri, headers: {
-      HttpHeaders.authorizationHeader: 'Token $token',
-      HttpHeaders.contentTypeHeader: 'application/json',
-    });
+        'prodplatform.b2clogin.com',
+         '/prodplatform.onmicrosoft.com/oauth2/v2.0/authorize', queryParameters);
+         print(uri);
+    var response = await http.get(uri);
+    print(response.body + '\n');
 
-    prefs = await SharedPreferences.getInstance();
-    while (prefs == null || result == null) continue;
-    setState(() {
-      prefs.setString('token', result.idToken);
-    });
+    // prefs = await SharedPreferences.getInstance();
+    // while (prefs == null || result == null) continue;
+    // setState(() {
+    //   prefs.setString('token', result.idToken);
+    // });
     //print(result);
-    var idToken = result.idToken;
-    final graphResponse = await http.get('https://graph.microsoft.com/v1.0/me',
-        headers: {HttpHeaders.authorizationHeader: "Bearer $idToken"});
-    print(graphResponse);
+    // var idToken = result.idToken;
+    // final graphResponse = await http.get('https://graph.microsoft.com/v1.0/me',
+    //     headers: {HttpHeaders.authorizationHeader: "Bearer $idToken"});
+    // print(graphResponse);
   }
 
   @override
