@@ -51,14 +51,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-   SharedPreferences prefs;
+  SharedPreferences prefs;
 
   /// Attributes for Azure B2C ///
   final clientId = 'b776705b-29e9-4b80-9c5f-4ccee78a7fef';
   final redirectURL = 'com.imaginecup.prodplatform://oauthredirect';
   final discoveryURL =
       'https://prodplatform.b2clogin.com/prodplatform.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1_SignUpSignIn';
-  final List<String> scopes = ['openid', 'profile',];
+  final List<String> scopes = [
+    'openid',
+    'profile',
+  ];
 
   @override
   void initState() {
@@ -67,28 +70,24 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   loadData() async {
-    FlutterAppAuth _appauth = FlutterAppAuth();
-    AuthorizationTokenResponse result;
-    try{
-    result = await _appauth.authorizeAndExchangeCode(
-      AuthorizationTokenRequest(clientId, redirectURL,
-          //issuer: "https://prodplatform.b2clogin.com/ccab738-09c1-45df-8aca-7c17c285b689/v2.0/",
-          discoveryUrl: discoveryURL,
-          scopes: scopes),
-    );
-    }
-    catch(e){
-      print(e.toString());
-    }
-    // final Config config = new Config(
-    //     "cc0ab738-09c1-45df-8aca-7c17c285b689",
-    //     clientId,
-    //     "openid offline_access",
-    //     redirectURL);
-    // final AadOAuth oauth = new AadOAuth(config);
-    // await oauth.login();
-    // String result = await oauth.getAccessToken();
-
+//     https://<tenant-name>.b2clogin.com/tfp/<tenant-name>.onmicrosoft.com/<policy-name>/oauth2/v2.0/authorize?
+// client_id=<application-ID>
+// &nonce=anyRandomValue
+// &redirect_uri=https://jwt.ms
+// &scope=https://tenant-name>.onmicrosoft.com/api/read
+// &response_type=code
+    var queryParameters = {
+      'client_id': 'one',
+      'nonce': 'two',
+      'redirect_uri': redirectURL,
+      'scope': "https://prodplatform.onmicrosoft.com/api/read openid offline Contacts.ReadWrite",
+    };
+    var uri = Uri.https(
+        'www.myurl.com', '/api/v1/test/${widget.pk}', queryParameters);
+    var response = await http.get(uri, headers: {
+      HttpHeaders.authorizationHeader: 'Token $token',
+      HttpHeaders.contentTypeHeader: 'application/json',
+    });
 
     prefs = await SharedPreferences.getInstance();
     while (prefs == null || result == null) continue;
@@ -97,12 +96,9 @@ class _MyHomePageState extends State<MyHomePage> {
     });
     //print(result);
     var idToken = result.idToken;
-    final graphResponse = await http.get(
-      'https://graph.microsoft.com/v1.0/me',
-      headers: { HttpHeaders.authorizationHeader: "Bearer $idToken"}
-    );
+    final graphResponse = await http.get('https://graph.microsoft.com/v1.0/me',
+        headers: {HttpHeaders.authorizationHeader: "Bearer $idToken"});
     print(graphResponse);
-  
   }
 
   @override
@@ -139,7 +135,6 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            
             Text(
               'Test',
               style: Theme.of(context).textTheme.display1,
