@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final redirectURL = 'com.imaginecup.prodplatform://oauthredirect';
   final discoveryURL =
       'https://prodplatform.b2clogin.com/prodplatform.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1_SignUpSignIn';
-  final List<String> scopes = ['openid', 'profile',];
+  final List<String> scopes = ['b776705b-29e9-4b80-9c5f-4ccee78a7fef','openid', 'profile', ];
 
   @override
   void initState() {
@@ -96,12 +96,12 @@ class _MyHomePageState extends State<MyHomePage> {
       prefs.setString('token', result.idToken);
     });
     //print(result);
-    var idToken = result.idToken;
+    var idToken = result.accessToken;
     final graphResponse = await http.get(
       'https://graph.microsoft.com/v1.0/me',
       headers: { HttpHeaders.authorizationHeader: "Bearer $idToken"}
     );
-    print(graphResponse);
+    print(graphResponse.body);
   
   }
 
