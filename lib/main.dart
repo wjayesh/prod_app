@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -44,21 +44,25 @@ class MyHomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
+  final String? title;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-   SharedPreferences prefs;
+  late SharedPreferences prefs;
 
   /// Attributes for Azure B2C ///
   final clientId = 'b776705b-29e9-4b80-9c5f-4ccee78a7fef';
   final redirectURL = 'com.imaginecup.prodplatform://oauthredirect';
   final discoveryURL =
       'https://prodplatform.b2clogin.com/prodplatform.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1_SignUpSignIn';
-  final List<String> scopes = ['b776705b-29e9-4b80-9c5f-4ccee78a7fef','openid', 'profile', ];
+  final List<String> scopes = [
+    'b776705b-29e9-4b80-9c5f-4ccee78a7fef',
+    'openid',
+    'profile',
+  ];
 
   @override
   void initState() {
@@ -68,16 +72,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   loadData() async {
     FlutterAppAuth _appauth = FlutterAppAuth();
-    AuthorizationTokenResponse result;
-    try{
-    result = await _appauth.authorizeAndExchangeCode(
-      AuthorizationTokenRequest(clientId, redirectURL,
-          //issuer: "https://prodplatform.b2clogin.com/ccab738-09c1-45df-8aca-7c17c285b689/v2.0/",
-          discoveryUrl: discoveryURL,
-          scopes: scopes),
-    );
-    }
-    catch(e){
+    late AuthorizationTokenResponse? result;
+    try {
+      result = await _appauth.authorizeAndExchangeCode(
+        AuthorizationTokenRequest(clientId, redirectURL,
+            //issuer: "https://prodplatform.b2clogin.com/ccab738-09c1-45df-8aca-7c17c285b689/v2.0/",
+            discoveryUrl: discoveryURL,
+            scopes: scopes),
+      );
+    } catch (e) {
       print(e.toString());
     }
     // final Config config = new Config(
@@ -89,20 +92,17 @@ class _MyHomePageState extends State<MyHomePage> {
     // await oauth.login();
     // String result = await oauth.getAccessToken();
 
-
     prefs = await SharedPreferences.getInstance();
     while (prefs == null || result == null) continue;
     setState(() {
-      prefs.setString('token', result.idToken);
+      prefs.setString('token', result?.idToken ?? '');
     });
     //print(result);
     var idToken = result.accessToken;
     final graphResponse = await http.get(
-      'https://graph.microsoft.com/v1.0/me',
-      headers: { HttpHeaders.authorizationHeader: "Bearer $idToken"}
-    );
+        Uri.parse('https://graph.microsoft.com/v1.0/me'),
+        headers: {HttpHeaders.authorizationHeader: "Bearer $idToken"});
     print(graphResponse.body);
-  
   }
 
   @override
@@ -117,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text(widget.title ?? ''),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -139,10 +139,9 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            
             Text(
               'Test',
-              style: Theme.of(context).textTheme.display1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
           ],
         ),
